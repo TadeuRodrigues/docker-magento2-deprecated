@@ -1,0 +1,36 @@
+FROM php:7.0.19-fpm
+
+RUN apt update && apt -y upgrade
+
+# Install bcmath
+RUN docker-php-ext-install bcmath
+
+# Install GD
+RUN apt install -y libfreetype6-dev libjpeg62-turbo-dev libpng12-dev
+RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
+RUN docker-php-ext-install gd
+
+# Install mcrypt
+RUN apt install -y libmcrypt-dev
+RUN docker-php-ext-install mcrypt
+
+#Install PDO
+RUN docker-php-ext-install pdo_mysql
+
+# Install XSL
+RUN apt install -y libxslt-dev
+RUN docker-php-ext-install xsl
+
+# Install intl
+RUN apt install -y libicu-dev
+#RUN pecl install intl
+RUN docker-php-ext-install intl
+
+# Install zip
+RUN docker-php-ext-install zip
+
+#Clear cache
+RUN apt-get clean
+
+#Install composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer

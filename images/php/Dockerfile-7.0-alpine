@@ -1,0 +1,27 @@
+FROM php:7.0.19-fpm-alpine
+
+RUN apk update && \
+    apk upgrade
+
+RUN apk add libmcrypt-dev \
+            libpng-dev \
+            libjpeg-turbo-dev \
+            freetype-dev \
+            php5-soap \
+            libxml2-dev \
+            libxslt-dev \
+            icu \
+            icu-dev \
+            libintl
+
+RUN docker-php-ext-configure intl
+RUN docker-php-ext-configure \
+        gd --with-freetype-dir=/usr/include/ \
+           --with-jpeg-dir=/usr/include/
+RUN docker-php-ext-install mcrypt gd soap bcmath zip xsl mysqli pdo_mysql intl
+
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
+
+RUN rm -rf /var/cache/apk/*
+
+#USER www-data
