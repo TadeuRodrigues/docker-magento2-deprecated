@@ -23,9 +23,6 @@ services:
             - back
 
     php:
-        #image: andreaskoch/dockerized-magento-php
-        #image: php:5.6-fpm
-        #image: php:5.6-fpm-alpine
         container_name: ${PROJECT_NAME}_php
         build:
             context: ./images/php
@@ -42,7 +39,7 @@ services:
             - database
             # - cache
             # - session
-        user: www-data
+        # user: www-data
         networks:
             - back
 
@@ -108,3 +105,4 @@ networks:
 
 volumes:
     database_data:
+        driver: local

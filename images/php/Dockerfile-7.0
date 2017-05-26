@@ -29,20 +29,25 @@ RUN docker-php-ext-install intl
 # Install zip
 RUN docker-php-ext-install zip
 
-# Install xdebug
-#RUN cd /tmp/ && git clone https://github.com/xdebug/xdebug.git \
-#    && cd xdebug && phpize && ./configure --enable-xdebug && make \
-#    && mkdir /usr/lib/php7/ && cp modules/xdebug.so /usr/lib/php7/xdebug.so \
-#    && touch /usr/local/etc/php/ext-xdebug.ini \
-#    && rm -r /tmp/xdebug \
-#    && apt-get purge -y --auto-remove
+# Install opcache
+RUN docker-php-ext-install opcache
 
-#Clear cache
+# Install memcache
+RUN apt-get update && apt-get install -y libmemcached-dev zlib1g-dev \
+    && pecl install memcached \
+    && docker-php-ext-enable memcached
+
+# Install xdebug
+RUN pecl install xdebug-2.5.0 \
+    && docker-php-ext-enable xdebug
+
+# Clear cache
 RUN apt-get clean
+RUN apt-get purge -y --auto-remove
+
+# Install composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
 
 # Set www-data as owner for /var/www
 RUN chown -R www-data:www-data /var/www/
 RUN chmod -R g+w /var/www/
-
-#Install composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
